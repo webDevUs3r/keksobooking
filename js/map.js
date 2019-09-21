@@ -372,10 +372,85 @@ var cardAdTemplate = document.querySelector('#card').content;
 // Шаблон метки объявления
 var pinAdTemplate = document.querySelector('#pin').content;
 
-var createCardAd = function () {
-  var newCardAd;
+// Тип жилья
+var getTypeHouse = function (typeItem) {
+  var typeHouse;
+
+  switch (typeItem) {
+    case 'flat':
+      typeHouse = 'Квартира';
+      break;
+    case 'bungalo':
+      typeHouse = 'Бунгало';
+      break;
+    case 'house':
+      typeHouse = 'Дом';
+      break;
+    case 'palace':
+      typeHouse = 'Дворец';
+      break;
+  }
+
+  return typeHouse;
 };
 
+// Создать картинку
+var createElement = function (src) {
+  var newElement = document.createElement('img');
+  newElement.width = 45;
+  newElement.height = 40;
+  newElement.alt = 'Фотография жилья';
+  newElement.src = src;
+  newElement.classList.add('popup__photo');
+
+  return newElement;
+};
+
+// Получить список удобст
+var getFeaturesList = function (template, classList) {
+  var featuresList = template.querySelectorAll('.popup__features li');
+    for (var i = 0; i < featuresList.length; i++) {
+      if (classList[i]) {
+        featuresList[i].classList.add('popup__feature');
+        featuresList[i].classList.add('popup__feature--' + classList[i]);
+      } else {
+        featuresList[i].remove();
+      }
+    }
+    return featuresList;
+};
+
+// Получить список фотографии объявления
+var getPhotosList = function (photos) {
+  var photosContainer = document.createDocumentFragment();
+
+  for (var i = 0; i < photos.length; i++) {
+    photosContainer.appendChild(createElement(photos[i]));
+  }
+  return photosContainer;
+};
+
+var createCardAd = function (arr) {
+  var newCardAd = cardAdTemplate.querySelector('.map__card');
+  newCardAd.querySelector('.popup__avatar').src = arr.author.avatar;
+  newCardAd.querySelector('.popup__title').textContent = arr.offer.title;
+  newCardAd.querySelector('.popup__text--address').textContent = arr.offer.address;
+  newCardAd.querySelector('.popup__text--price').textContent = arr.offer.price + 'P/ночь';
+  newCardAd.querySelector('.popup__type').textContent = getTypeHouse(arr.offer.type);
+  newCardAd.querySelector('.popup__text--capacity').textContent = arr.offer.rooms + ' комнаты для ' + arr.offer.guests + ' гостей';
+  newCardAd.querySelector('.popup__text--time').textContent = 'Заезд после ' + arr.offer.checkin + ', выезд до ' + arr.offer.checkout;
+
+  var list = getFeaturesList(newCardAd, arr.offer.features);
+
+  newCardAd.querySelector('.popup__description').textContent = arr.offer.description;
+
+  var listPhotosAd = getPhotosList(arr.offer.photos);
+  newCardAd.querySelector('.popup__photos').appendChild(listPhotosAd);
+
+  return newCardAd;
+};
+
+// Метка на карте
 var createMapPin = function (dataItem) {
   var PIN_HEIGHT = 70;
   var PIN_WIDTH = 50;
@@ -383,20 +458,27 @@ var createMapPin = function (dataItem) {
   var newMapPin = pinAdTemplate.querySelector('.map__pin').cloneNode(true);
   newMapPin.style.left = dataItem.location.x - pinHalfWidth + 'px';
   newMapPin.style.top = dataItem.location.y - PIN_HEIGHT + 'px';
-  newMapPin.src = dataItem.author.avatar;
+  newMapPin.querySelector('img').src = dataItem.author.avatar;
   newMapPin.alt = dataItem.offer.title;
 
   return newMapPin;
 };
 
+// Отрисовать объявления на карте
 var renderCardAd = function (adList) {
+  var filtersAds = document.querySelector('.map__filters-container');
   var fragment = document.createDocumentFragment();
-  // for (var i = 0; i < adList.length; i++) {
-  //   fragment.appendChild(createCardAd(adList[i]));
-  // }
-  fragment.appendChild(createMapPin(adList));
+
+  for (var i = 0; i < adList.length; i++) {
+    if (adList[i] === adList[0]) {
+      var ad = createCardAd(adList[0]);
+      map.insertBefore(ad, filtersAds);
+    }
+    fragment.appendChild(createMapPin(adList[i]));
+  }
+
   mapPinsList.appendChild(fragment);
 };
 
-renderCardAd(a);
+renderCardAd(data);
 
