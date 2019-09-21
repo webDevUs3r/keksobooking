@@ -324,8 +324,79 @@ var data = [
   }
 ];
 
+var a = {
+    "author": {
+      "avatar": "img/avatars/default.png"
+    },
+    "offer": {
+      "title": "Милое гнездышко для фанатов Анимэ",
+      "address": "105-0003 Tōkyō-to, Minato-ku, Nishishinbashi, 2 Chome−3",
+      "price": 90000,
+      "type": "house",
+      "rooms": 1,
+      "guests": 2,
+      "checkin": "23:00",
+      "checkout": "5:00",
+      "features": [
+        "wifi",
+        "dishwasher",
+        "parking",
+        "washer",
+        "elevator",
+        "conditioner"
+      ],
+      "description": "Азиатов просьба не беспокоить.",
+      "photos": [
+        "https://cdn.ostrovok.ru/t/x500/second2/1389653673/9237e4e2ff53d3d1beb69e49412df972.jpg",
+        "https://cdn.ostrovok.ru/t/x500/second/1389604422/ff530e241de007ce3af7bdd23719ae0a.jpg",
+        "https://cdn.ostrovok.ru/t/x500/mec/hotels/2000000/1480000/1479400/1479346/1479346_34_b.jpg",
+        "https://cdn.ostrovok.ru/t/x500/mec/hotels/2000000/1480000/1479400/1479346/1479346_40_b.jpg"
+      ]
+    },
+    "location": {
+      "x": 535,
+      "y": 418
+    }
+  };
+
 
 // Карта объявлений
 var map = document.querySelector('.map');
 // Активируем карту
 map.classList.remove('map--faded');
+// Контейнер объявлений
+var mapPinsList = map.querySelector('.map__pins');
+
+// Шаблон объявления
+var cardAdTemplate = document.querySelector('#card').content;
+// Шаблон метки объявления
+var pinAdTemplate = document.querySelector('#pin').content;
+
+var createCardAd = function () {
+  var newCardAd;
+};
+
+var createMapPin = function (dataItem) {
+  var PIN_HEIGHT = 70;
+  var PIN_WIDTH = 50;
+  var pinHalfWidth = PIN_WIDTH / 2;
+  var newMapPin = pinAdTemplate.querySelector('.map__pin').cloneNode(true);
+  newMapPin.style.left = dataItem.location.x - pinHalfWidth + 'px';
+  newMapPin.style.top = dataItem.location.y - PIN_HEIGHT + 'px';
+  newMapPin.src = dataItem.author.avatar;
+  newMapPin.alt = dataItem.offer.title;
+
+  return newMapPin;
+};
+
+var renderCardAd = function (adList) {
+  var fragment = document.createDocumentFragment();
+  // for (var i = 0; i < adList.length; i++) {
+  //   fragment.appendChild(createCardAd(adList[i]));
+  // }
+  fragment.appendChild(createMapPin(adList));
+  mapPinsList.appendChild(fragment);
+};
+
+renderCardAd(a);
+
