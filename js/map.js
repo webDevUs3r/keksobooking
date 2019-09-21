@@ -323,3 +323,9 @@ var data = [
     }
   }
 ];
+
+
+// Карта объявлений
+var map = document.querySelector('.map');
+// Активируем карту
+map.classList.remove('map--faded');
