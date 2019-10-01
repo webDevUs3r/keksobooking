@@ -360,10 +360,15 @@ var a = {
   };
 
 
+
+// Работа с картой
+
 // Карта объявлений
 var map = document.querySelector('.map');
+
 // Активируем карту
-map.classList.remove('map--faded');
+
+
 // Контейнер объявлений
 var mapPinsList = map.querySelector('.map__pins');
 
@@ -450,6 +455,8 @@ var createCardAd = function (arr) {
   return newCardAd;
 };
 
+  var filtersAds = document.querySelector('.map__filters-container');
+
 // Метка на карте
 var createMapPin = function (dataItem) {
   var PIN_HEIGHT = 70;
@@ -461,24 +468,79 @@ var createMapPin = function (dataItem) {
   newMapPin.querySelector('img').src = dataItem.author.avatar;
   newMapPin.alt = dataItem.offer.title;
 
+  newMapPin.addEventListener('click', function (evt) {
+    // console.log(evt.target);
+    // console.log('work');
+
+    // var ad;
+    // if (!ad) {
+    //   ad = createCardAd(dataItem);
+    // } else {
+
+    // }
+    // // ad = createCardAd(dataItem);
+    // map.insertBefore(ad, filtersAds);
+  });
+
   return newMapPin;
 };
 
 // Отрисовать объявления на карте
 var renderCardAd = function (adList) {
-  var filtersAds = document.querySelector('.map__filters-container');
+
   var fragment = document.createDocumentFragment();
 
   for (var i = 0; i < adList.length; i++) {
-    if (adList[i] === adList[0]) {
-      var ad = createCardAd(adList[0]);
-      map.insertBefore(ad, filtersAds);
-    }
+    // if (adList[i] === adList[0]) {
+    //   var ad = createCardAd(adList[0]);
+    //   map.insertBefore(ad, filtersAds);
+    // }
     fragment.appendChild(createMapPin(adList[i]));
   }
 
   mapPinsList.appendChild(fragment);
 };
 
-renderCardAd(data);
+
+// Работа с картой
+// Использет var map,
+
+var mapPinMain = map.querySelector('.map__pin--main');
+
+
+
+var adForm = document.querySelector('.ad-form');
+
+var enableAdForm = function () {
+  adForm.classList.remove('ad-form--disabled');
+
+  var adFormElements = adForm.querySelectorAll('.ad-form__element');
+
+  for (var i = 0; i < adFormElements.length; i++) {
+    adFormElements[i].disabled = false;
+  }
+};
+
+mapPinMain.addEventListener('mouseup', function (evt) {
+  map.classList.remove('map--faded');
+
+  // Активация формы
+  enableAdForm();
+  // Запись координаты метки?
+
+  // Похожие объявления
+  renderCardAd(data);
+});
+
+// Записать координаты метки в поле адреса
+// Изучить шаблоны
+// 1200x704
+
+var MAIN_PIN_WIDTH;
+var MAIN_PIN_HEIGHT;
+
+console.log(mapPinMain.style.left);
+
+
+// renderCardAd(data);
 
