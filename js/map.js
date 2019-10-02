@@ -366,7 +366,7 @@ var a = {
 // Карта объявлений
 var map = document.querySelector('.map');
 
-// Активируем карту
+// var filtersAds = document.querySelector('.map__filters-container');
 
 
 // Контейнер объявлений
@@ -435,8 +435,9 @@ var getPhotosList = function (photos) {
   return photosContainer;
 };
 
+// Создать объявление
 var createCardAd = function (arr) {
-  var newCardAd = cardAdTemplate.querySelector('.map__card');
+  var newCardAd = cardAdTemplate.querySelector('.map__card').cloneNode(true);
   newCardAd.querySelector('.popup__avatar').src = arr.author.avatar;
   newCardAd.querySelector('.popup__title').textContent = arr.offer.title;
   newCardAd.querySelector('.popup__text--address').textContent = arr.offer.address;
@@ -452,12 +453,16 @@ var createCardAd = function (arr) {
   var listPhotosAd = getPhotosList(arr.offer.photos);
   newCardAd.querySelector('.popup__photos').appendChild(listPhotosAd);
 
+  var closeButton = newCardAd.querySelector('.popup__close');
+  // Закрыть объявление
+  closeButton.addEventListener('click', function () {
+    removeCardAd();
+  });
+
   return newCardAd;
 };
 
-  var filtersAds = document.querySelector('.map__filters-container');
-
-// Метка на карте
+// Создать метку
 var createMapPin = function (dataItem) {
   var PIN_HEIGHT = 70;
   var PIN_WIDTH = 50;
@@ -468,37 +473,42 @@ var createMapPin = function (dataItem) {
   newMapPin.querySelector('img').src = dataItem.author.avatar;
   newMapPin.alt = dataItem.offer.title;
 
-  newMapPin.addEventListener('click', function (evt) {
-    // console.log(evt.target);
-    // console.log('work');
-
-    // var ad;
-    // if (!ad) {
-    //   ad = createCardAd(dataItem);
-    // } else {
-
-    // }
-    // // ad = createCardAd(dataItem);
-    // map.insertBefore(ad, filtersAds);
+  newMapPin.addEventListener('click', function () {
+    renderCardAd(dataItem);
   });
 
   return newMapPin;
 };
 
-// Отрисовать объявления на карте
-var renderCardAd = function (adList) {
-
+// Отрисовать метки на карте
+var renderAdPins = function (adList) {
   var fragment = document.createDocumentFragment();
 
   for (var i = 0; i < adList.length; i++) {
-    // if (adList[i] === adList[0]) {
-    //   var ad = createCardAd(adList[0]);
-    //   map.insertBefore(ad, filtersAds);
-    // }
     fragment.appendChild(createMapPin(adList[i]));
   }
-
   mapPinsList.appendChild(fragment);
+};
+
+// Закрыть объявление/Удалить объявление
+var removeCardAd = function () {
+  var cardAdPopup = document.querySelector('.map__card.popup');
+
+  if (cardAdPopup) {
+    cardAdPopup.remove();
+  }
+};
+
+
+// Отрисовать объявление
+var renderCardAd = function (ad) {
+  var filtersAds = document.querySelector('.map__filters-container');
+  // Удаляем предыдущее объявление
+  removeCardAd();
+  // Создаём объявление
+  var ad = createCardAd(ad);
+  // Добавляем на объявление на карту
+  map.insertBefore(ad, filtersAds);
 };
 
 
@@ -511,13 +521,23 @@ var mapPinMain = map.querySelector('.map__pin--main');
 
 var adForm = document.querySelector('.ad-form');
 
+var activatePage = function () {
+
+};
+
+var deactivatePage = function () {
+
+};
+
 var enableAdForm = function () {
   adForm.classList.remove('ad-form--disabled');
 
   var adFormElements = adForm.querySelectorAll('.ad-form__element');
 
   for (var i = 0; i < adFormElements.length; i++) {
-    adFormElements[i].disabled = false;
+    if (adFormElements[i].children[1] !== 'input[name="address"]') {
+      adFormElements[i].disabled = false;
+    }
   }
 };
 
@@ -529,18 +549,42 @@ mapPinMain.addEventListener('mouseup', function (evt) {
   // Запись координаты метки?
 
   // Похожие объявления
-  renderCardAd(data);
+  renderAdPins(data);
+
 });
 
 // Записать координаты метки в поле адреса
 // Изучить шаблоны
 // 1200x704
 
-var MAIN_PIN_WIDTH;
-var MAIN_PIN_HEIGHT;
+var MAIN_PIN_WIDTH = 30;
+var MAIN_PIN_HEIGHT = 80;
 
-console.log(mapPinMain.style.left);
 
+  var coordinateX = mapPinMain.style.left;
+  var coordinateY = mapPinMain.style.top;
+
+// Получить координату метки
+var getCoordinate = function (coordinate) {
+  var newCoord = '';
+
+  for (var i = 0; i < coordinate.length; i++) {
+    if (coordinate[i] !== 'p') {
+      newCoord += coordinate[i];
+    } else {
+      break;
+    }
+  }
+
+  return newCoord;
+};
+
+console.log('Координата X: ' + getCoordinate(mapPinMain.style.left));
+console.log('Координата Y: ' + getCoordinate(mapPinMain.style.top));
+
+
+var addressInput = adForm.querySelector('input[name="address"]');
+addressInput.value = getCoordinate(mapPinMain.style.left) + ', ' + getCoordinate(mapPinMain.style.top);
 
 // renderCardAd(data);
 
