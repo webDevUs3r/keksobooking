@@ -497,6 +497,7 @@ var removeCardAd = function () {
   if (cardAdPopup) {
     cardAdPopup.remove();
   }
+  document.removeEventListener('keydown', buttonCloseEscPressHandler);
 };
 
 
@@ -506,9 +507,19 @@ var renderCardAd = function (ad) {
   // Удаляем предыдущее объявление
   removeCardAd();
   // Создаём объявление
-  var ad = createCardAd(ad);
+  var newAd = createCardAd(ad);
   // Добавляем на объявление на карту
-  map.insertBefore(ad, filtersAds);
+  map.insertBefore(newAd, filtersAds);
+
+  document.addEventListener('keydown', buttonCloseEscPressHandler);
+};
+
+var ESC_KEYCODE = 27;
+
+var buttonCloseEscPressHandler = function (evt) {
+  if (evt.keyCode === ESC_KEYCODE) {
+    removeCardAd();
+  }
 };
 
 
@@ -516,8 +527,6 @@ var renderCardAd = function (ad) {
 // Использет var map,
 
 var mapPinMain = map.querySelector('.map__pin--main');
-
-
 
 var adForm = document.querySelector('.ad-form');
 
@@ -529,6 +538,7 @@ var deactivatePage = function () {
 
 };
 
+// Активация формы
 var enableAdForm = function () {
   adForm.classList.remove('ad-form--disabled');
 
@@ -550,7 +560,6 @@ mapPinMain.addEventListener('mouseup', function (evt) {
 
   // Похожие объявления
   renderAdPins(data);
-
 });
 
 // Записать координаты метки в поле адреса
