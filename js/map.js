@@ -562,13 +562,123 @@ mapPinMain.addEventListener('mouseup', function (evt) {
   renderAdPins(data);
 });
 
+// Валидация формы
+
+adForm.addEventListener('invalid', function (evt) {
+  evt.target.style.border = '2px solid green';
+});
+
+var checkHouseType = function (i, house) {
+  var priceInput = adForm.querySelector('#price');
+
+  if (house === 'bungalo') {
+    priceInput.min = 0;
+  }
+};
+
+var typeHouseButtonClickHandler = function (type) {
+  type.addEventListener('click', function (evt) {
+    console.log('xyi');
+  });
+};
+
+// Работаем с секцией "Тип жилья - Цена за ночь"
+
+// alignNumberOfRoomsToGuest, getNumberOfGuests, getNumberOfRooms
+
+// Получить цену за ночь
+var getPricePerNight = function (houseType) {
+  var price;
+
+  switch (houseType) {
+    case 'bungalo':
+      price = 0;
+      break;
+    case 'flat':
+      price = 1000;
+      break;
+    case 'house':
+      price = 5000;
+      break;
+    case 'palace':
+      price = 10000;
+      break;
+  }
+
+  return price;
+};
+
+// Установить цену за ночь
+var setPricePerNight = function (houseType) {
+  var inputPrice = adForm.querySelector('#price');
+  inputPrice.min = getPricePerNight(houseType);
+  inputPrice.placeholder = getPricePerNight(houseType);
+};
+
+// Изменить цену за ночь в зависимости от типа жилья
+var changePricePerNight = function () {
+  var houseTypeList = adForm.querySelector('#type');
+
+  // находит выделенный элемент по-умолчанию
+  // Устанавливаем значение по-умолчанию
+  for (var i = 0; i < houseTypeList.options.length; i++) {
+    if (houseTypeList.options[i].selected) {
+      setPricePerNight(houseTypeList.options[i].value);
+    }
+  }
+
+  houseTypeList.addEventListener('change', function (e) {
+    setPricePerNight(e.target.value);
+  });
+};
+
+changePricePerNight();
+
+// Работа с секцией "Заезд-выезд"
+
+// Установить время заезда-выезда
+var setTime = function (target, times) {
+  for (var i = 0; i < times.options.length; i++) {
+    if (times.options[i].value === target) {
+      times.options[i].selected = true;
+    }
+  }
+};
+
+// Изменить время заезда-выезда
+var changeTime = function () {
+  var timeIn = adForm.querySelector('#timein');
+  var timeOut = adForm.querySelector('#timeout');
+
+  timeIn.addEventListener('change', function (evt) {
+    var selectedTimeIn = evt.target.value;
+    setTime(selectedTimeIn, timeOut);
+  });
+
+  timeOut.addEventListener('change', function(evt) {
+    var selectedTimeOut = evt.target.value;
+    setTime(selectedTimeOut, timeIn);
+  });
+};
+
+changeTime();
+
+
+var getNumberOfGuests = function () {
+
+};
+
+var getNumberOfRooms = function () {
+
+};
+
+
 // Записать координаты метки в поле адреса
 // Изучить шаблоны
 // 1200x704
 
 var MAIN_PIN_WIDTH = 30;
 var MAIN_PIN_HEIGHT = 80;
-
 
   var coordinateX = mapPinMain.style.left;
   var coordinateY = mapPinMain.style.top;
@@ -588,8 +698,8 @@ var getCoordinate = function (coordinate) {
   return newCoord;
 };
 
-console.log('Координата X: ' + getCoordinate(mapPinMain.style.left));
-console.log('Координата Y: ' + getCoordinate(mapPinMain.style.top));
+// console.log('Координата X: ' + getCoordinate(mapPinMain.style.left));
+// console.log('Координата Y: ' + getCoordinate(mapPinMain.style.top));
 
 
 var addressInput = adForm.querySelector('input[name="address"]');
