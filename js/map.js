@@ -582,8 +582,8 @@ var typeHouseButtonClickHandler = function (type) {
   });
 };
 
-// Работаем с секцией "Тип жилья - Цена за ночь"
 
+// Работаем с секцией "Тип жилья - Цена за ночь"
 // alignNumberOfRoomsToGuest, getNumberOfGuests, getNumberOfRooms
 
 // Получить цену за ночь
@@ -634,6 +634,7 @@ var changePricePerNight = function () {
 
 changePricePerNight();
 
+
 // Работа с секцией "Заезд-выезд"
 
 // Установить время заезда-выезда
@@ -646,7 +647,7 @@ var setTime = function (target, times) {
 };
 
 // Изменить время заезда-выезда
-var changeTime = function () {
+var changeTimeFilter = function () {
   var timeIn = adForm.querySelector('#timein');
   var timeOut = adForm.querySelector('#timeout');
 
@@ -661,8 +662,65 @@ var changeTime = function () {
   });
 };
 
-changeTime();
+changeTimeFilter();
 
+
+// Работа с секцией "Кол-во комнат-Количество мест"
+
+var roomsList = adForm.querySelector('#room_number');
+var capacityList = adForm.querySelector('#capacity');
+
+// Получить количество мест
+var getNumberOfSeats = function (rooms) {
+  if (rooms !== '100') {
+    for (var k = 0; k < capacityList.options.length; k++) {
+      if (capacityList.options[k].value > rooms) {
+        capacityList.options[k].disabled = true;
+      } else if (capacityList.options[k].value === '0') {
+        capacityList.options[k].disabled = true;
+      } else {
+        capacityList.options[k].disabled = false;
+      }
+    }
+  } else {
+    for (var i = 0; i < capacityList.options.length; i++) {
+      if (capacityList.options[i].value > 0) {
+        capacityList.options[i].disabled = true;
+      } else {
+        capacityList.options[i].disabled = false;
+      }
+    }
+  }
+};
+
+// Установить значение фильтра по-умолчанию
+var disableCapacityItems = function () {
+  for (var i = 0; i < capacityList.options.length; i++) {
+    if (!capacityList.options[i].selected) {
+      capacityList.options[i].disabled = true;
+    }
+  }
+};
+
+
+// Состояние фильтра по-умолчанию
+var setDefaultStateNumberOfSeats = function () {
+  for (var i = 0; i < roomsList.options.length; i++) {
+    if (roomsList.options[i].selected) {
+      disableCapacityItems();
+    }
+  }
+};
+
+setDefaultStateNumberOfSeats();
+
+roomsList.addEventListener('change', function (evt) {
+  getNumberOfSeats(evt.target.value);
+});
+
+var changeStateNumberOfSeats = function () {
+
+};
 
 var getNumberOfGuests = function () {
 
