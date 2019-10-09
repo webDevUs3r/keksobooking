@@ -562,6 +562,8 @@ mapPinMain.addEventListener('mouseup', function (evt) {
   renderAdPins(data);
 });
 
+
+// Работа с формой
 // Валидация формы
 
 adForm.addEventListener('invalid', function (evt) {
@@ -616,7 +618,7 @@ var setPricePerNight = function (houseType) {
 };
 
 // Изменить цену за ночь в зависимости от типа жилья
-var changePricePerNight = function () {
+var changePricePerNightFilter = function () {
   var houseTypeList = adForm.querySelector('#type');
 
   // находит выделенный элемент по-умолчанию
@@ -632,7 +634,7 @@ var changePricePerNight = function () {
   });
 };
 
-changePricePerNight();
+changePricePerNightFilter();
 
 
 // Работа с секцией "Заезд-выезд"
@@ -688,6 +690,7 @@ var getNumberOfSeats = function (rooms) {
         capacityList.options[i].disabled = true;
       } else {
         capacityList.options[i].disabled = false;
+        capacityList.options[i].selected = true;
       }
     }
   }
@@ -712,15 +715,16 @@ var setDefaultStateNumberOfSeats = function () {
   }
 };
 
-setDefaultStateNumberOfSeats();
+// Запустить фильтр "Кол-во комнат - Количество мест"
+var changeStateNumberOfSeatsFilter = function () {
+  setDefaultStateNumberOfSeats();
 
-roomsList.addEventListener('change', function (evt) {
-  getNumberOfSeats(evt.target.value);
-});
-
-var changeStateNumberOfSeats = function () {
-
+  roomsList.addEventListener('change', function (evt) {
+    getNumberOfSeats(evt.target.value);
+  });
 };
+
+changeStateNumberOfSeatsFilter();
 
 var getNumberOfGuests = function () {
 
@@ -729,6 +733,68 @@ var getNumberOfGuests = function () {
 var getNumberOfRooms = function () {
 
 };
+
+
+// Валидация формы
+
+//  Валидация заголовка объявления/Заголовок объявления
+var adTitleInput = adForm.querySelector('#title');
+
+var setErrorStatus = function (input) {
+  input.style.borderColor = 'red';
+};
+
+var setSuccessStatus = function (input) {
+  input.style.borderColor = 'green';
+};
+
+adTitleInput.addEventListener('invalid', function (evt) {
+  if (adTitleInput.validity.tooShort) {
+    adTitleInput.setCustomValidity('Длина объявления должна быть не меньше 30-ти символов');
+    setErrorStatus(evt.target);
+  } else if (adTitleInput.validity.tooLong) {
+    adTitleInput.setCustomValidity('Длина заголовка не должна превышать 100 символов');
+    setErrorStatus(evt.target);
+  } else {
+    adTitleInput.setCustomValidity('');
+    setSuccessStatus(evt.target);
+  }
+});
+
+// Валидация цены - price
+var adPriceInput = adForm.querySelector('#price');
+
+adPriceInput.addEventListener('invalid', function (evt) {
+  var minPrice = adPriceInput.min;
+
+  if (adPriceInput.validity.valueMissing) {
+    adPriceInput.setCustomValidity('Обязательное поле для заполнения');
+    setErrorStatus(evt.target);
+  } else if (adPriceInput.value.length < minPrice) {
+    adPriceInput.setCustomValidity('Цена должна быть не ниже ' + minPrice);
+    setErrorStatus(evt.target);
+  } else {
+    adPriceInput.setCustomValidity('');
+    setSuccessStatus(evt.target);
+  }
+});
+
+
+
+// console.log(adPriceInput.min);
+
+// var price = adPriceInput.min;
+
+// adPriceInput.addEventListener('change', function (e) {
+//   console.log(price);
+// });
+// adForm.addEventListener('invalid', function(e) {
+//   console.log(adPriceInput.min);
+// });
+
+// adPriceInput.addEventListener('change', function(e) {
+//   console.log(adPriceInput.min);
+// });
 
 
 // Записать координаты метки в поле адреса
