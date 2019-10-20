@@ -123,7 +123,7 @@
       setTime(selectedTimeIn, timeOut);
     });
 
-    timeOut.addEventListener('change', function(evt) {
+    timeOut.addEventListener('change', function (evt) {
       var selectedTimeOut = evt.target.value;
       setTime(selectedTimeOut, timeIn);
     });
@@ -248,11 +248,11 @@
   // Изучить шаблоны
   // 1200x704
 
-  var MAIN_PIN_WIDTH = 30;
-  var MAIN_PIN_HEIGHT = 80;
+  // var MAIN_PIN_WIDTH = 30;
+  // var MAIN_PIN_HEIGHT = 80;
 
-    var coordinateX = mapPinMain.style.left;
-    var coordinateY = mapPinMain.style.top;
+  var coordinateX = mapPinMain.style.left;
+  var coordinateY = mapPinMain.style.top;
 
   // Получить координату метки
   var getCoordinate = function (coordinate) {
@@ -269,10 +269,14 @@
     return newCoord;
   };
 
-  // console.log('Координата X: ' + getCoordinate(mapPinMain.style.left));
-  // console.log('Координата Y: ' + getCoordinate(mapPinMain.style.top));
+  var defaultCoords = function () {
+    var addressInput = adForm.querySelector('input[name="address"]');
+    addressInput.value = getCoordinate(mapPinMain.style.left) + ', ' + getCoordinate(mapPinMain.style.top);
+  };
+  defaultCoords();
 
-
-  var addressInput = adForm.querySelector('input[name="address"]');
-  addressInput.value = getCoordinate(mapPinMain.style.left) + ', ' + getCoordinate(mapPinMain.style.top);
+  window.setCoords = function () {
+    var addressInput = adForm.querySelector('input[name="address"]');
+    addressInput.value = getCoordinate(mapPinMain.style.left) + ', ' + getCoordinate(mapPinMain.style.top);
+  };
 })();
