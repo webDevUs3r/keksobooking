@@ -7,14 +7,6 @@
 
   var adForm = document.querySelector('.ad-form');
 
-  var activatePage = function () {
-
-  };
-
-  var deactivatePage = function () {
-
-  };
-
   // Активация формы
   window.enableAdForm = function () {
     adForm.classList.remove('ad-form--disabled');
@@ -28,30 +20,10 @@
     }
   };
 
-    // Работа с формой
-  // Валидация формы
 
-  adForm.addEventListener('invalid', function (evt) {
-    evt.target.style.border = '2px solid green';
-  });
-
-  var checkHouseType = function (i, house) {
-    var priceInput = adForm.querySelector('#price');
-
-    if (house === 'bungalo') {
-      priceInput.min = 0;
-    }
-  };
-
-  var typeHouseButtonClickHandler = function (type) {
-    type.addEventListener('click', function (evt) {
-      console.log('xyi');
-    });
-  };
-
+  // Работа с формой
 
   // Работаем с секцией "Тип жилья - Цена за ночь"
-  // alignNumberOfRoomsToGuest, getNumberOfGuests, getNumberOfRooms
 
   // Получить цену за ночь
   var getPricePerNight = function (houseType) {
@@ -191,68 +163,8 @@
 
   changeStateNumberOfSeatsFilter();
 
-  var getNumberOfGuests = function () {
-
-  };
-
-  var getNumberOfRooms = function () {
-
-  };
-
-
-  // Валидация формы
-
-  //  Валидация заголовка объявления/Заголовок объявления
-  var adTitleInput = adForm.querySelector('#title');
-
-  var setErrorStatus = function (input) {
-    input.style.borderColor = 'red';
-  };
-
-  var setSuccessStatus = function (input) {
-    input.style.borderColor = 'green';
-  };
-
-  adTitleInput.addEventListener('invalid', function (evt) {
-    if (adTitleInput.validity.tooShort) {
-      adTitleInput.setCustomValidity('Длина объявления должна быть не меньше 30-ти символов');
-      setErrorStatus(evt.target);
-    } else if (adTitleInput.validity.tooLong) {
-      adTitleInput.setCustomValidity('Длина заголовка не должна превышать 100 символов');
-      setErrorStatus(evt.target);
-    } else {
-      adTitleInput.setCustomValidity('');
-      setSuccessStatus(evt.target);
-    }
-  });
-
-  // Валидация цены - price
-  var adPriceInput = adForm.querySelector('#price');
-
-  adPriceInput.addEventListener('invalid', function (evt) {
-    var minPrice = adPriceInput.min;
-
-    if (adPriceInput.validity.valueMissing) {
-      adPriceInput.setCustomValidity('Обязательное поле для заполнения');
-      setErrorStatus(evt.target);
-    } else if (adPriceInput.value.length < minPrice) {
-      adPriceInput.setCustomValidity('Цена должна быть не ниже ' + minPrice);
-      setErrorStatus(evt.target);
-    } else {
-      adPriceInput.setCustomValidity('');
-      setSuccessStatus(evt.target);
-    }
-  });
 
   // Записать координаты метки в поле адреса
-  // Изучить шаблоны
-  // 1200x704
-
-  // var MAIN_PIN_WIDTH = 30;
-  // var MAIN_PIN_HEIGHT = 80;
-
-  var coordinateX = mapPinMain.style.left;
-  var coordinateY = mapPinMain.style.top;
 
   // Получить координату метки
   var getCoordinate = function (coordinate) {
@@ -279,4 +191,124 @@
     var addressInput = adForm.querySelector('input[name="address"]');
     addressInput.value = getCoordinate(mapPinMain.style.left) + ', ' + getCoordinate(mapPinMain.style.top);
   };
+
+
+  // Валидация формы
+
+  //  Валидация заголовка объявления/Заголовок объявления
+  var adTitleInput = adForm.querySelector('#title');
+
+  var setErrorStatus = function (input) {
+    input.style.borderColor = 'red';
+  };
+
+  var setSuccessStatus = function (input) {
+    input.style.borderColor = '';
+  };
+
+  adTitleInput.addEventListener('invalid', function (evt) {
+    if (adTitleInput.validity.tooShort) {
+      adTitleInput.setCustomValidity('Длина объявления должна быть не меньше 30-ти символов');
+      setErrorStatus(evt.target);
+    } else if (adTitleInput.validity.tooLong) {
+      adTitleInput.setCustomValidity('Длина заголовка не должна превышать 100 символов');
+      setErrorStatus(evt.target);
+    } else {
+      adTitleInput.setCustomValidity('');
+      setSuccessStatus(evt.target);
+    }
+  });
+
+  // Валидация поля "цены - price"
+  var adPriceInput = adForm.querySelector('#price');
+
+  adPriceInput.addEventListener('invalid', function (evt) {
+    var minPrice = adPriceInput.min;
+
+    if (adPriceInput.validity.valueMissing) {
+      adPriceInput.setCustomValidity('Обязательное поле для заполнения');
+      setErrorStatus(evt.target);
+    } else if (adPriceInput.value.length < minPrice) {
+      adPriceInput.setCustomValidity('Цена должна быть не ниже ' + minPrice);
+      setErrorStatus(evt.target);
+    } else {
+      adPriceInput.setCustomValidity('');
+      setSuccessStatus(evt.target);
+    }
+  });
+
+  // Сбросить форму
+  var resetFormToDefaultState = function () {
+    // Заголовок
+    adTitleInput.value = '';
+
+    // Адресс
+    mapPinMain.style.left = '570px';
+    mapPinMain.style.top = '375px';
+    var address = adForm.querySelector('input[name="address"]');
+    address.value = '570, 375';
+
+
+    // Тип жилья
+    var types = adForm.querySelector('#type');
+    for (var i = 0; i < types.options.length; i++) {
+      if (types.options[i].value === 'flat') {
+        types.options[i].selected = true;
+      } else {
+        types.options[i].selected = false;
+      }
+    }
+
+    // Цена
+    var price = adForm.querySelector('#price');
+    price.value = '';
+    price.min = 1000;
+    price.placeholder = '1000';
+
+    // Комнаты
+    var rooms = adForm.querySelector('#room_number');
+    var capacities = adForm.querySelector('#capacity');
+
+    for (var j = 0; j < rooms.options.length; j++) {
+      if (rooms.options[j].value === '1') {
+        rooms.options[j].selected = true;
+      } else {
+        rooms.options[j].selected = false;
+      }
+    }
+
+    // Места
+    for (var k = 0; k < capacities.options.length; k++) {
+      if (capacities.options[k].value === '1') {
+        capacities.options[k].selected = true;
+      } else {
+        capacities.options[k].selected = false;
+      }
+    }
+
+    // Заезд-выезд
+    var checkIn = adForm.querySelector('#timein');
+    var checkOut = adForm.querySelector('#timeout');
+
+    var setDefaultTime = function (list) {
+      for (var time = 0; time < list.options.length; time++) {
+        if (list.options[time].value === '12:00') {
+          list.options[time].selected = true;
+        } else {
+          list.options[time].selected = false;
+        }
+      }
+    };
+    setDefaultTime(checkIn);
+    setDefaultTime(checkOut);
+
+    // Описание
+    var description = adForm.querySelector('#description');
+    description.value = '';
+  };
+
+  adForm.addEventListener('submit', function (evt) {
+    window.backend.save(new FormData(adForm), resetFormToDefaultState, window.utils.errorHandler);
+    evt.preventDefault();
+  });
 })();

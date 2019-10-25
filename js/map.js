@@ -3,16 +3,17 @@
 (function () {
   // Карта объявлений
   var map = document.querySelector('.map');
+  // Метка
   var mapPinMain = map.querySelector('.map__pin--main');
 
   mapPinMain.addEventListener('mouseup', function () {
-  map.classList.remove('map--faded');
-  // // Активация формы
-  window.enableAdForm();
-  // // Запись координаты метки?
+    // Активировать карту
+    map.classList.remove('map--faded');
+    // // Активация формы
+    window.enableAdForm();
 
-  // Отрисовать метки
-  window.renderAdPins(window.data);
+    // Отрисовать метки
+    window.backend.load(window.renderAdPins, window.utils.errorHandler);
   });
 
   var ESC_KEYCODE = 27;
@@ -38,6 +39,7 @@
   var dragPin = function () {
 
   };
+
   var pinsMap = document.querySelector('.map__pins');
 
   var MIN_VERTICAL_DRAG = 130;
@@ -49,17 +51,16 @@
 
   mainPin.addEventListener('mousedown', function (evt) {
 
+    // Координаты нажатия мыши
     var startCoords = {
       x: evt.clientX,
       y: evt.clientY
     };
 
-    // console.log(startCoords.x, startCoords.y);
-    // console.log(mainPin.offsetTop);
-
     var mainPinMouseMoveHandler = function (moveEvt) {
       moveEvt.preventDefault();
 
+      // Координаты сдвига мыши
       var shift = {
         x: startCoords.x - moveEvt.clientX,
         y: startCoords.y - moveEvt.clientY
@@ -70,7 +71,6 @@
         y: moveEvt.clientY
       };
 
-      // console.log('offsetTop: ' + mainPin.offsetTop);
 
       // Перетаскивание метки по вертикали
       if (mainPin.offsetTop < MAX_VERTICAL_DRAG || mainPin.offsetTop > MIN_VERTICAL_DRAG) {
