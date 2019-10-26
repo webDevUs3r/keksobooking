@@ -50,6 +50,20 @@
     return photosContainer;
   };
 
+  // Получить список удобст
+  var getFeaturesList = function (template, classList) {
+    var featuresList = template.querySelectorAll('.popup__features li');
+      for (var i = 0; i < featuresList.length; i++) {
+        if (classList[i]) {
+          featuresList[i].classList.add('popup__feature');
+          featuresList[i].classList.add('popup__feature--' + classList[i]);
+        } else {
+          featuresList[i].remove();
+        }
+      }
+      return featuresList;
+  };
+
   // Создать объявление
   var createCardAd = function (arr) {
     var newCardAd = cardAdTemplate.querySelector('.map__card').cloneNode(true);
@@ -60,8 +74,8 @@
     newCardAd.querySelector('.popup__type').textContent = getTypeHouse(arr.offer.type);
     newCardAd.querySelector('.popup__text--capacity').textContent = arr.offer.rooms + ' комнаты для ' + arr.offer.guests + ' гостей';
     newCardAd.querySelector('.popup__text--time').textContent = 'Заезд после ' + arr.offer.checkin + ', выезд до ' + arr.offer.checkout;
-
-    // var list = getFeaturesList(newCardAd, arr.offer.features);
+    // Особенности
+    getFeaturesList(newCardAd, arr.offer.features);
 
     newCardAd.querySelector('.popup__description').textContent = arr.offer.description;
 

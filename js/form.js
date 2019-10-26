@@ -237,78 +237,120 @@
     }
   });
 
-  // Сбросить форму
-  var resetFormToDefaultState = function () {
-    // Заголовок
+
+  // Очистить заголовок объявления
+  var clearTitle = function () {
     adTitleInput.value = '';
+  };
 
-    // Адресс
-    mapPinMain.style.left = '570px';
-    mapPinMain.style.top = '375px';
+  // Адрес и положение метки по умолчанию
+  var setDefaultAddress = function () {
+    var DEFAULT_COORD_X = '570';
+    var DEFAULT_COORD_Y = '375';
+
+    mapPinMain.style.left = DEFAULT_COORD_X + 'px';
+    mapPinMain.style.top = DEFAULT_COORD_Y + 'px';
     var address = adForm.querySelector('input[name="address"]');
-    address.value = '570, 375';
+    address.value = DEFAULT_COORD_X + ', ' + DEFAULT_COORD_Y;
+  };
 
-
-    // Тип жилья
-    var types = adForm.querySelector('#type');
-    for (var i = 0; i < types.options.length; i++) {
-      if (types.options[i].value === 'flat') {
-        types.options[i].selected = true;
+  // Значение поля по умолчанию
+  var setDefaultValue = function (list, value) {
+    for (var k = 0; k < list.options.length; k++) {
+      if (list.options[k].value === value) {
+        list.options[k].selected = true;
       } else {
-        types.options[i].selected = false;
+        list.options[k].selected = false;
       }
     }
+  };
 
-    // Цена
+  // Цена по умолчанию
+  var setDefaultPrice = function () {
     var price = adForm.querySelector('#price');
     price.value = '';
     price.min = 1000;
     price.placeholder = '1000';
+  };
+
+  var clearDescription = function () {
+    var description = adForm.querySelector('#description');
+    description.value = '';
+  };
+
+  // Сбросить форму
+  var resetFormToDefaultState = function () {
+    // Заголовок
+    clearTitle();
+
+    // Адресс
+    setDefaultAddress();
+
+    // Тип жилья
+    var types = adForm.querySelector('#type');
+    setDefaultValue(types, 'flat');
+
+    // Цена
+    setDefaultPrice();
 
     // Комнаты
     var rooms = adForm.querySelector('#room_number');
     var capacities = adForm.querySelector('#capacity');
-
-    for (var j = 0; j < rooms.options.length; j++) {
-      if (rooms.options[j].value === '1') {
-        rooms.options[j].selected = true;
-      } else {
-        rooms.options[j].selected = false;
-      }
-    }
-
+    // Комнаты
+    setDefaultValue(rooms, '1');
     // Места
-    for (var k = 0; k < capacities.options.length; k++) {
-      if (capacities.options[k].value === '1') {
-        capacities.options[k].selected = true;
-      } else {
-        capacities.options[k].selected = false;
-      }
-    }
+    setDefaultValue(capacities, '1');
 
     // Заезд-выезд
     var checkIn = adForm.querySelector('#timein');
     var checkOut = adForm.querySelector('#timeout');
 
-    var setDefaultTime = function (list) {
-      for (var time = 0; time < list.options.length; time++) {
-        if (list.options[time].value === '12:00') {
-          list.options[time].selected = true;
-        } else {
-          list.options[time].selected = false;
-        }
-      }
-    };
-    setDefaultTime(checkIn);
-    setDefaultTime(checkOut);
+    setDefaultValue(checkIn, '12:00');
+    setDefaultValue(checkOut, '12:00');
 
     // Описание
-    var description = adForm.querySelector('#description');
-    description.value = '';
+    clearDescription();
   };
 
+  // Удалить метки
+  var removePins = function () {
+    var pins = document.querySelectorAll('button.map__pin[type="button"]');
+
+    pins.forEach(function (pin) {
+      pin.remove();
+    });
+  };
+
+  // Деактивировать страницу
+  var deactivatePage = function () {
+    // Удалить объявление
+    window.removeCardAd();
+
+    // Удаляем метки на карте
+    removePins();
+
+    // Сбрасываем форму
+    resetFormToDefaultState();
+    // Показываем сообщение об успешной отправке
+    window.utils.successHandler();
+  };
+
+  // Переключить страницу в неактивное состояние
+  var resetButton = adForm.querySelector('.ad-form__reset');
+
+  resetButton.addEventListener('click', function () {
+    // Удалить объявление
+    window.removeCardAd();
+    // Удаляем метки на карте
+    removePins();
+    // Сбрасываем форму
+    resetFormToDefaultState();
+  });
+
+  // Отправка формы
   adForm.addEventListener('submit', function (evt) {
-    window.backend.save(new FormData(adForm), resetFormToDefaultState, window.utils.errorHandler);
+    window.backend.save(new FormData(adForm), deactivatePage, window.utils.errorHandler);
     evt.preventDefault();
   });
+
 })();
